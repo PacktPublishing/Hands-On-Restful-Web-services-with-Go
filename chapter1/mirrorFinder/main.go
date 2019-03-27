@@ -5,51 +5,39 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/Hands-On-Restful-Web-services-with-Go/chapter1/mirrors"
 )
 
-func findFastest(urls []string) []byte {
-	var fastestURL string
-	var fastestTime time.Duration
+type response struct {
+	FastestURL string        `json:"fastest_url"`
+	Latency    time.Duration `json:"latency"`
+}
+
+func findFastest(urls []string) response {
+	urlChan := make(chan string)
+	latencyChan := make(chan time.Duration)
 
 	for _, url := range urls {
-		start := time.Now()
-		_, err := http.Get(url + "/README")
-		if err == nil {
-			now := time.Now()
-			latency := now.Sub(start) / time.Millisecond
-
-			if fastestTime == 0 {
-				fastestURL = url
-				fastestTime = latency
-				continue
+		mirrorURL := url
+		go func() {
+			start := time.Now()
+			_, err := http.Get(mirrorURL + "/README")
+			latency := time.Now().Sub(start) / time.Millisecond
+			if err == nil {
+				urlChan <- mirrorURL
+				latencyChan <- latency
 			}
-
-			if latency < fastestTime {
-				fastestURL = url
-				fastestTime = latency
-			}
-
-			fmt.Printf("Mirror: %s, Latency: %dms\n", url, latency)
-		}
+		}()
 	}
-	data := make(map[string]string)
-	data["fastest_mirror"] = fastestURL
-	data["latency"] = strconv.Itoa(int(fastestTime))
-	resp, _ := json.Marshal(data)
-	return resp
+	return response{<-urlChan, <-latencyChan}
 }
 
 func main() {
 	http.HandleFunc("/fastest-mirror", func(w http.ResponseWriter, r *http.Request) {
-		respJSON := findFastest(mirrors.MirrorList)
-		// d := make(map[string]int)
-		// d["data"] = 3
-		// respJSON, _ := json.Marshal(d)
-		fmt.Printf(string(respJSON))
+		response := findFastest(mirrors.MirrorList)
+		respJSON, _ := json.Marshal(response)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(respJSON)
 	})
