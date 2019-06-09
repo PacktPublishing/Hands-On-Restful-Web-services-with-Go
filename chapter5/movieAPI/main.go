@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -45,6 +44,7 @@ func (db *DB) GetMovie(w http.ResponseWriter, r *http.Request) {
 	objectID, _ := primitive.ObjectIDFromHex(vars["id"])
 	filter := bson.M{"_id": objectID}
 	err := db.collection.FindOne(context.TODO(), filter).Decode(&movie)
+
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	} else {
@@ -60,9 +60,8 @@ func (db *DB) PostMovie(w http.ResponseWriter, r *http.Request) {
 	var movie Movie
 	postBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(postBody, &movie)
-	// Create an Hash ID to insert
+
 	result, err := db.collection.InsertOne(context.TODO(), movie)
-	fmt.Println(movie)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 	} else {
@@ -75,19 +74,18 @@ func (db *DB) PostMovie(w http.ResponseWriter, r *http.Request) {
 func main() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, err := mongo.Connect(context.TODO(), clientOptions)
-	collection := client.Database("appDB").Collection("movies")
-	db := &DB{collection: collection}
 	if err != nil {
 		panic(err)
 	}
-
 	defer client.Disconnect(context.TODO())
-	// Create a new router
-	r := mux.NewRouter()
 
-	// Attach an elegant path with handler
+	collection := client.Database("appDB").Collection("movies")
+	db := &DB{collection: collection}
+
+	r := mux.NewRouter()
 	r.HandleFunc("/v1/movies/{id:[a-zA-Z0-9]*}", db.GetMovie).Methods("GET")
 	r.HandleFunc("/v1/movies", db.PostMovie).Methods("POST")
+
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         "127.0.0.1:8000",
