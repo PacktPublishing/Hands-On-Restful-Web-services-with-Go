@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
+	pb "github.com/Hands-On-Restful-Web-services-with-Go/chapter6/protofiles"
 	"github.com/golang/protobuf/proto"
-	pb "github.com/narenaryan/protofiles"
 )
 
 func main() {
