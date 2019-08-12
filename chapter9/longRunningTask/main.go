@@ -52,7 +52,6 @@ func init() {
 	*/
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	handleError(err, "Dialing failed to RabbitMQ broker")
-	defer conn.Close()
 
 	startWorkers(conn)
 }
@@ -64,11 +63,9 @@ func getServer(name string) Server {
 	*/
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	handleError(err, "Dialing failed to RabbitMQ broker")
-	defer conn.Close()
 
 	channel, err := conn.Channel()
 	handleError(err, "Fetching channel failed")
-	defer channel.Close()
 
 	jobQueue, err := channel.QueueDeclare(
 		"jobQueue", // Name of the queue
@@ -79,7 +76,7 @@ func getServer(name string) Server {
 		nil,        // Extra args
 	)
 	handleError(err, "Job queue creation failed")
-	return Server{Channel: channel, Queue: jobQueue}
+	return Server{Conn: conn, Channel: channel, Queue: jobQueue}
 }
 
 func main() {
@@ -97,4 +94,6 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 	log.Fatal(srv.ListenAndServe())
+	defer server.Channel.Close()
+	defer server.Conn.Close()
 }

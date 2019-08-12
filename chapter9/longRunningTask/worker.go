@@ -39,10 +39,11 @@ func (w *Worker) run() {
 	)
 	go func() {
 		for message := range messages {
-			log.Printf("Received a message from the queue: %s", message.Body)
+			log.Printf("Worker %s: Received a message from the queue: %s", w.name, message.Body)
 		}
 	}()
 
+	defer w.conn.Close()
 	wait := make(chan bool)
 	<-wait
 }
