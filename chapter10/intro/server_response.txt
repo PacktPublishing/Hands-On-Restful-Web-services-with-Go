@@ -1,0 +1,12 @@
+{
+  "data": {
+    "user": {
+      "name": "alice",
+      "address": [{
+        "city": "Munich",
+        "street": "Marianplatz",
+        "postalCode": "80331"
+      }]
+    }
+  }
+}

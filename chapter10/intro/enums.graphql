@@ -1,0 +1,18 @@
+type Query {
+  vehilce: Vehicle
+}
+
+enum Vehicle {
+  Car
+  Bus
+}
+
+type Car {
+  name: String,
+  wheels: Int
+}
+
+type Bus {
+  name: String,
+  wheels: Int
+}
