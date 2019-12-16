@@ -1,0 +1,14 @@
+type Query {
+  user: Person
+}
+
+type Person {
+  name: String,
+  address: []
+}
+
+type Address {
+  city: String,
+  street: String,
+  postalCode: Float
+}

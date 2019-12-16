@@ -1,0 +1,17 @@
+
+input CounterInput {
+  value: Int
+}
+
+type Query {
+  getCounter(id: Int!): Count
+}
+
+type Count {
+  id: Int
+  value: Int
+}
+
+type Mutation {
+  updateCounter(id: Int!, input: CounterInput)
+}

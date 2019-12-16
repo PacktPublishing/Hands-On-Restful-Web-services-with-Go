@@ -1,0 +1,5 @@
+mutation {
+  updateCounter(CounterInput: {value: 2}) {
+    value
+  }
+}
