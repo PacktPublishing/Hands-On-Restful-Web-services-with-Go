@@ -1,0 +1,32 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+version: '3'
+
+services:
+  # App Service
+  app:
+    build:
+      context: ./bookServer
+      dockerfile: Dockerfile
+    expose:
+      - 8000
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Nginx Service   
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-conf:/etc/nginx/conf.d
+    depends_on: 
+        - app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
