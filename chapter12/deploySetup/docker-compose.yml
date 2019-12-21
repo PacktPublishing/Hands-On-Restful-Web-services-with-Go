@@ -15,7 +15,7 @@ services:
 
   # Nginx Service   
   nginx:
-    image: nginx
+    image: nginx:alpine
     restart: unless-stopped
     ports:
       - "80:80"

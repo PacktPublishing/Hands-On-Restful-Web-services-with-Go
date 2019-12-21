@@ -12,4 +12,4 @@ build:
 
 deploy:
 	docker-compose rm -f
-	docker-compose up --build
+	docker-compose up --build -d
