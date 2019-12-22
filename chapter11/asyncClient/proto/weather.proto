@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+// Example message
+message Event {
+	// city name
+	string city = 1;
+	// unix timestamp
+	int64 timestamp = 2;
+	// temperaure in Celcius
+	int64 temperature = 3;
+}
