@@ -1,57 +1,54 @@
 resource "aws_api_gateway_rest_api" "test" {
   name        = "EC2Example"
   description = "Terraform EC2 REST API Example"
-}
 
-// Resource is an endpoint
-resource "aws_api_gateway_resource" "proxy" {
-   rest_api_id = aws_api_gateway_rest_api.test.id
-   parent_id   = aws_api_gateway_rest_api.test.root_resource_id
-   path_part   = "{proxy+}"
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
 }
 
 // Method is a client HTTP method
-resource "aws_api_gateway_method" "proxy" {
-   rest_api_id   = aws_api_gateway_rest_api.test.id
-   resource_id   = aws_api_gateway_resource.proxy.id
-   http_method   = "GET"
-   authorization = "NONE"
- }
-
-// Target endpoint configuration
-resource "aws_api_gateway_integration" "http_server" {
-   rest_api_id = aws_api_gateway_rest_api.test.id
-   resource_id = aws_api_gateway_method.proxy.resource_id
-   http_method = aws_api_gateway_method.proxy.http_method
-
-   integration_http_method = "GET"
-   type                    = "AWS_PROXY"
-   uri                     = aws_instance.api_server.arn
- }
-
-// Root resource method
-resource "aws_api_gateway_method" "proxy_root" {
+resource "aws_api_gateway_method" "test" {
    rest_api_id   = aws_api_gateway_rest_api.test.id
    resource_id   = aws_api_gateway_rest_api.test.root_resource_id
    http_method   = "GET"
+
    authorization = "NONE"
  }
 
-// Root resource integration
- resource "aws_api_gateway_integration" "http_server_root" {
+// Method response configuration
+resource "aws_api_gateway_method_response" "test" {
+  rest_api_id = aws_api_gateway_rest_api.test.id
+  resource_id = aws_api_gateway_rest_api.test.root_resource_id
+  http_method = aws_api_gateway_method.test.http_method
+
+  status_code = "200"
+}
+
+// Integration request configuration
+resource "aws_api_gateway_integration" "test" {
    rest_api_id = aws_api_gateway_rest_api.test.id
-   resource_id = aws_api_gateway_method.proxy_root.resource_id
-   http_method = aws_api_gateway_method.proxy_root.http_method
+   resource_id = aws_api_gateway_method.test.resource_id
+   http_method = aws_api_gateway_method.test.http_method
 
    integration_http_method = "GET"
-   type                    = "AWS_PROXY"
-   uri                     = aws_instance.api_server.arn
+   type                    = "HTTP"
+   uri                     = "http://${aws_instance.api_server.public_dns}/api/books"
  }
 
-resource "aws_api_gateway_deployment" "example" {
+// Integration response configuration
+resource "aws_api_gateway_integration_response" "MyDemoIntegrationResponse" {
+  rest_api_id = aws_api_gateway_rest_api.test.id
+  resource_id = aws_api_gateway_rest_api.test.root_resource_id
+  http_method = aws_api_gateway_method.test.http_method
+
+  status_code = aws_api_gateway_method_response.test.status_code
+}
+
+// Deploy API on Gateway with test environment
+resource "aws_api_gateway_deployment" "test_deployment" {
    depends_on = [
-     aws_api_gateway_integration.http_server,
-     aws_api_gateway_integration.http_server_root,
+     aws_api_gateway_integration.test
    ]
 
    rest_api_id = aws_api_gateway_rest_api.test.id

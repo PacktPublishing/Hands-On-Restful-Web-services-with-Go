@@ -13,3 +13,4 @@ resource "aws_instance" "api_server" {
   instance_type = "t2.micro"
   key_name      = aws_key_pair.api_server_key.key_name
 }
+
