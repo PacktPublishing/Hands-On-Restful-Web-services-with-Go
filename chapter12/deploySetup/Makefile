@@ -8,7 +8,7 @@ all:
 
 build:
 	$(info Building the book server binary...)
-	cd ${PROJECT_NAME} && GOOS=linux GOARCH=arm ${GOBUILD} -o "$(BINARY_NAME)" -v
+	cd ${PROJECT_NAME} && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 ${GOBUILD} -o "$(BINARY_NAME)" -v
 
 deploy:
 	docker-compose rm -f
