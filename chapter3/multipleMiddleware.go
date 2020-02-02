@@ -36,7 +36,7 @@ func setServerTimeCookie(handler http.Handler) http.Handler {
 	})
 }
 
-func mainLogic(w http.ResponseWriter, r *http.Request) {
+func handle(w http.ResponseWriter, r *http.Request) {
 	// Check if method is POST
 	if r.Method == "POST" {
 		var tempCity city
@@ -59,7 +59,7 @@ func mainLogic(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	mainLogicHandler := http.HandlerFunc(mainLogic)
-	http.Handle("/city", filterContentType(setServerTimeCookie(mainLogicHandler)))
+	originalHandler := http.HandlerFunc(handle)
+	http.Handle("/city", filterContentType(setServerTimeCookie(originalHandler)))
 	http.ListenAndServe(":8000", nil)
 }

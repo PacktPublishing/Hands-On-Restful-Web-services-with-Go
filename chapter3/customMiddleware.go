@@ -14,7 +14,7 @@ func middleware(handler http.Handler) http.Handler {
 	})
 }
 
-func mainLogic(w http.ResponseWriter, r *http.Request) {
+func handle(w http.ResponseWriter, r *http.Request) {
 	// Business logic goes here
 	fmt.Println("Executing mainHandler...")
 	w.Write([]byte("OK"))
@@ -22,7 +22,7 @@ func mainLogic(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// HandlerFunc returns a HTTP Handler
-	mainLogicHandler := http.HandlerFunc(mainLogic)
-	http.Handle("/", middleware(mainLogicHandler))
+	originalHandler := http.HandlerFunc(handle)
+	http.Handle("/", middleware(originalHandler))
 	http.ListenAndServe(":8000", nil)
 }
