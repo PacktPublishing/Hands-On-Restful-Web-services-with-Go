@@ -54,7 +54,7 @@ func main() {
 	}
 
 	// Insert a document into MongoDB
-	result, err := collection.InsertOne(context.TODO(), darkNight)
+	_, err = collection.InsertOne(context.TODO(), darkNight)
 
 	if err != nil {
 		log.Fatal(err)
@@ -63,16 +63,17 @@ func main() {
 	queryResult := &Movie{}
 	// bson.M is used for nested fields
 	filter := bson.M{"boxOffice.budget": bson.M{"$gt": 150000000}}
-	err = collection.FindOne(context.TODO(), filter).Decode(queryResult)
+	result := collection.FindOne(context.TODO(), filter)
+	err = result.Decode(queryResult)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Movie:", result)
+	fmt.Println("Movie:", queryResult)
 	err = client.Disconnect(context.TODO())
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("disconnected from MongoDB")
+	fmt.Println("Disconnected from MongoDB")
 }
