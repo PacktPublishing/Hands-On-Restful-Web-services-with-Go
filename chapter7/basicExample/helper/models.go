@@ -3,7 +3,6 @@ package helper
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	_ "github.com/lib/pq" // sql behavior modified
 )
@@ -12,7 +11,7 @@ const (
 	host     = "127.0.0.1"
 	port     = 5432
 	user     = "gituser"
-	password = "passme123"
+	password = "passme"
 	dbname   = "mydb"
 )
 
@@ -26,19 +25,19 @@ func InitDB() (*sql.DB, error) {
 
 	if err != nil {
 		return nil, err
-	} else {
-		stmt, err := db.Prepare("CREATE TABLE WEB_URL(ID SERIAL PRIMARY KEY, URL TEXT NOT NULL);")
-		if err != nil {
-			log.Println(err)
-			return nil, err
-		}
-		res, err := stmt.Exec()
-		log.Println(res)
-		if err != nil {
-			log.Println(err)
-			return nil, err
-		}
-		fmt.Println("Table has been created successfully!")
-		return db, nil
 	}
+
+	stmt, err := db.Prepare("CREATE TABLE IF NOT EXISTS web_url(ID SERIAL PRIMARY KEY, URL TEXT NOT NULL);")
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = stmt.Exec()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }

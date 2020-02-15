@@ -1,4 +1,4 @@
-package models
+package helper
 
 import (
 	"fmt"
@@ -36,9 +36,7 @@ func (Package) TableName() string {
 }
 
 func InitDB() (*gorm.DB, error) {
-	var connectionString = fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	var connectionString = fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", user, password, host, dbname)
 	var err error
 	db, err := gorm.Open("postgres", connectionString)
 	if err != nil {
