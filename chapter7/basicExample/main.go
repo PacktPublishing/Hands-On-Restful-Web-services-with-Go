@@ -3,12 +3,14 @@ package main
 import (
 	"log"
 
-	helper "github.com/Hands-On-Restful-Web-services-with-Go/chapter7/basicExample/helper"
+	"github.com/Hands-On-Restful-Web-services-with-Go/chapter7/basicExample/helper"
 )
 
 func main() {
-	db, err := helper.InitDB()
+	_, err := helper.InitDB()
 	if err != nil {
-		log.Println(db)
+		log.Println(err)
 	}
+
+	log.Println("Database tables are successfully initialized.")
 }

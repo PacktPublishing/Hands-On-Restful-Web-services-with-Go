@@ -7,33 +7,32 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Hands-On-Restful-Web-services-with-Go/chapter7/jsonstore/models"
+	"github.com/Hands-On-Restful-Web-services-with-Go/chapter7/jsonstore/helper"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
 
-// DB stores the database session imformation. Needs to be initialized once
+// DBClient stores the database session imformation. Needs to be initialized once
 type DBClient struct {
 	db *gorm.DB
 }
 
 // PackageResponse is the response to be send back for Package
 type PackageResponse struct {
-	Package models.Package `json:"Package"`
-	Data    interface{}    `json:"data"`
+	Package helper.Package `json:"Package"`
 }
 
 // GetPackage fetches a package
 func (driver *DBClient) GetPackage(w http.ResponseWriter, r *http.Request) {
-	var Package = models.Package{}
+	var Package = helper.Package{}
 	vars := mux.Vars(r)
 	// Handle response details
 	driver.db.First(&Package, vars["id"])
 	var PackageData interface{}
 	// Unmarshal JSON string to interface
 	json.Unmarshal([]byte(Package.Data), &PackageData)
-	var response = PackageResponse{Package: Package, Data: PackageData}
+	var response = PackageResponse{Package: Package}
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	respJSON, _ := json.Marshal(response)
@@ -42,7 +41,7 @@ func (driver *DBClient) GetPackage(w http.ResponseWriter, r *http.Request) {
 
 // GetPackagesbyWeight fetches all packages with given weight
 func (driver *DBClient) GetPackagesbyWeight(w http.ResponseWriter, r *http.Request) {
-	var packages []models.Package
+	var packages []helper.Package
 	weight := r.FormValue("weight")
 	// Handle response details
 	var query = "select * from \"Package\" where data->>'weight'=?"
@@ -55,7 +54,7 @@ func (driver *DBClient) GetPackagesbyWeight(w http.ResponseWriter, r *http.Reque
 
 // PostPackage saves a package
 func (driver *DBClient) PostPackage(w http.ResponseWriter, r *http.Request) {
-	var Package = models.Package{}
+	var Package = helper.Package{}
 	postBody, _ := ioutil.ReadAll(r.Body)
 	Package.Data = string(postBody)
 	driver.db.Save(&Package)
@@ -66,7 +65,7 @@ func (driver *DBClient) PostPackage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	db, err := models.InitDB()
+	db, err := helper.InitDB()
 	if err != nil {
 		panic(err)
 	}
