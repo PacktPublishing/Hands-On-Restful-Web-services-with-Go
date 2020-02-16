@@ -12,4 +12,5 @@ build:
 
 deploy:
 	docker-compose rm -f
+	# Remove -d to run containers in fore-ground
 	docker-compose up --build -d
