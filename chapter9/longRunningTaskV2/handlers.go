@@ -84,7 +84,7 @@ func (s *JobServer) asyncMailHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *JobServer) publish(jsonBody []byte) error {
 	message := amqp.Publishing{
-		ContentType: "text/json",
+		ContentType: "application/json",
 		Body:        jsonBody,
 	}
 	err := s.Channel.Publish(
