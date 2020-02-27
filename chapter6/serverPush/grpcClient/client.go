@@ -4,7 +4,7 @@ import (
 	"io"
 	"log"
 
-	pb "github.com/narenaryan/serverPush/datafiles"
+	pb "github.com/Hands-On-Restful-Web-services-with-Go/chapter6/serverPush/protofiles"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )

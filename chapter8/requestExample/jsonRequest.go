@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/levigross/grequests"
 	"log"
+
+	"github.com/levigross/grequests"
 )
 
 func main() {

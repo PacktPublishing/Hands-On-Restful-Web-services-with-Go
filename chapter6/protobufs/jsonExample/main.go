@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
-    "encoding/json"
-	pb "github.com/narenaryan/protofiles"
+	"encoding/json"
+
+	pb "github.com/Hands-On-Restful-Web-services-with-Go/chapter6/protobufs/protofiles"
 )
 
 func main() {

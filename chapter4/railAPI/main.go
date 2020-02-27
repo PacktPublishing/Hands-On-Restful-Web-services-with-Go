@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Hands-On-Restful-Web-services-with-Go/chapter4/dbutils"
 	"github.com/emicklei/go-restful"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/narenaryan/dbutils"
 )
 
 // DB Driver visible to whole program
@@ -41,10 +41,7 @@ type ScheduleResource struct {
 // Register adds paths and routes to container
 func (t *TrainResource) Register(container *restful.Container) {
 	ws := new(restful.WebService)
-	ws.
-		Path("/v1/trains").
-		Consumes(restful.MIME_JSON).
-		Produces(restful.MIME_JSON) // you can specify this per route as well
+	ws.Path("/v1/trains").Consumes(restful.MIME_JSON).Produces(restful.MIME_JSON) // you can specify this per route as well
 
 	ws.Route(ws.GET("/{train-id}").To(t.getTrain))
 	ws.Route(ws.POST("").To(t.createTrain))
