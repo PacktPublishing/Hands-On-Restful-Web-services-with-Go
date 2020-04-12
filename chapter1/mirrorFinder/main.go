@@ -22,6 +22,7 @@ func findFastest(urls []string) response {
 	for _, url := range urls {
 		mirrorURL := url
 		go func() {
+			log.Println("Started probing: ", mirrorURL)
 			start := time.Now()
 			_, err := http.Get(mirrorURL + "/README")
 			latency := time.Now().Sub(start) / time.Millisecond
@@ -29,6 +30,7 @@ func findFastest(urls []string) response {
 				urlChan <- mirrorURL
 				latencyChan <- latency
 			}
+			log.Printf("Got the best mirror: %s with latency: %s", mirrorURL, latency)
 		}()
 	}
 	return response{<-urlChan, <-latencyChan}
