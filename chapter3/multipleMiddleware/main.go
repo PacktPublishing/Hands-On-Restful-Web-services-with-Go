@@ -28,11 +28,11 @@ func filterContentType(handler http.Handler) http.Handler {
 
 func setServerTimeCookie(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handler.ServeHTTP(w, r)
 		// Setting cookie to every API response
-		cookie := http.Cookie{Name: "Server-Time(UTC)", Value: strconv.FormatInt(time.Now().Unix(), 10)}
+		cookie := http.Cookie{Name: "ServerTimeUTC", Value: strconv.FormatInt(time.Now().Unix(), 10)}
 		http.SetCookie(w, &cookie)
 		log.Println("Currently in the set server time middleware")
+		handler.ServeHTTP(w, r)
 	})
 }
 
