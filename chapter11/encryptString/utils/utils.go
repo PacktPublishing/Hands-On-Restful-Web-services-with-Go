@@ -30,7 +30,7 @@ func DecryptString(key, text string) string {
 		panic(err)
 	}
 	ciphertext, _ := base64.StdEncoding.DecodeString(text)
-	cfb := cipher.NewCFBEncrypter(block, initVector)
+	cfb := cipher.NewCFBDecrypter(block, initVector)
 	plaintext := make([]byte, len(ciphertext))
 	cfb.XORKeyStream(plaintext, ciphertext)
 	return string(plaintext)
